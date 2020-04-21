@@ -1,5 +1,6 @@
 local iputils = require "resty.iputils"
 
+local FORBIDDEN = 403
 local SERVICE_UNAVAILABLE = 503
 
 
@@ -53,7 +54,7 @@ function GuadianHandler:access(conf)
   local binary_remote_addr = ngx.var.binary_remote_addr
 
   if not binary_remote_addr then
-    return kong.response.exit(SERVICE_UNAVAILABLE, { message = "Cannot identify the client IP address, unix domain sockets are not supported." })
+    return kong.response.exit(FORBIDDEN, { message = "Cannot identify the client IP address, unix domain sockets are not supported." })
   end
 
   if conf.blacklist and #conf.blacklist > 0 then
@@ -65,7 +66,10 @@ function GuadianHandler:access(conf)
   end
 
   if block then
-    return kong.response.exit(SERVICE_UNAVAILABLE, { message = "Your IP address is not allowed" })
+    kong.response.set_header("X-Maintenance", true)
+    kong.response.set_header("Access-Control-Allow-Origin", "https://tcinvest.tcbs.com.vn")
+    kong.response.set_header("Access-Control-Expose-Headers", "X-Maintenance")
+    return kong.response.exit(SERVICE_UNAVAILABLE, { message = "Our system is under maintenance" })
   end
 end
 
