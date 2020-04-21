@@ -1,7 +1,6 @@
 local iputils = require "resty.iputils"
 
-
-local FORBIDDEN = 403
+local SERVICE_UNAVAILABLE = 503
 
 
 -- cache of parsed CIDR values
@@ -54,7 +53,7 @@ function GuadianHandler:access(conf)
   local binary_remote_addr = ngx.var.binary_remote_addr
 
   if not binary_remote_addr then
-    return kong.response.exit(FORBIDDEN, { message = "Cannot identify the client IP address, unix domain sockets are not supported." })
+    return kong.response.exit(SERVICE_UNAVAILABLE, { message = "Cannot identify the client IP address, unix domain sockets are not supported." })
   end
 
   if conf.blacklist and #conf.blacklist > 0 then
@@ -66,7 +65,7 @@ function GuadianHandler:access(conf)
   end
 
   if block then
-    return kong.response.exit(FORBIDDEN, { message = "Your IP address is not allowed" })
+    return kong.response.exit(SERVICE_UNAVAILABLE, { message = "Your IP address is not allowed" })
   end
 end
 
