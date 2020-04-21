@@ -2,7 +2,7 @@ local typedefs = require "kong.db.schema.typedefs"
 
 
 return {
-  name = "ip-restriction",
+  name = "guardian",
   fields = {
     { protocols = typedefs.protocols_http },
     { config = {

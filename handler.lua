@@ -8,10 +8,10 @@ local FORBIDDEN = 403
 local cache = {}
 
 
-local IpRestrictionHandler = {}
+local GuadianHandler = {}
 
-IpRestrictionHandler.PRIORITY = 990
-IpRestrictionHandler.VERSION = "2.0.0"
+GuadianHandler.PRIORITY = 990
+GuadianHandler.VERSION = "2.0.0"
 
 local function cidr_cache(cidr_tab)
   local cidr_tab_len = #cidr_tab
@@ -42,14 +42,14 @@ local function cidr_cache(cidr_tab)
   return parsed_cidrs
 end
 
-function IpRestrictionHandler:init_worker()
+function GuadianHandler:init_worker()
   local ok, err = iputils.enable_lrucache()
   if not ok then
     kong.log.err("could not enable lrucache: ", err)
   end
 end
 
-function IpRestrictionHandler:access(conf)
+function GuadianHandler:access(conf)
   local block = false
   local binary_remote_addr = ngx.var.binary_remote_addr
 
@@ -70,4 +70,4 @@ function IpRestrictionHandler:access(conf)
   end
 end
 
-return IpRestrictionHandler
+return GuadianHandler
